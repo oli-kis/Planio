@@ -55,7 +55,7 @@ namespace Planio.Controllers
             return BadRequest("Username or Password is wrong (╯°□°）╯︵ ┻━┻");
         }
 
-        [HttpPost("GetRole")]
+        [HttpGet("GetRole")]
         [Authorize(Roles = "admin, teacher, student")]
         public async Task<IActionResult> GetRole()
         {
