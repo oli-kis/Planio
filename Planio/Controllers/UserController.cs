@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.IdentityModel.Tokens;
 using Planio.Models;
 using Planio.Services;
@@ -14,19 +15,21 @@ namespace Planio.Controllers
     {
         private readonly StudentsService _studentsService;
         private readonly TeachersService _teachersService;
+        private readonly AdminService _adminService;
         private readonly UserService _userService;
 
         private readonly PasswordService _passwordService;
 
         private readonly IConfiguration _configuration;
 
-        public UserController(PasswordService passwordService, IConfiguration configuration, TeachersService teachersService, StudentsService studentsService, UserService userService)
+        public UserController(PasswordService passwordService, IConfiguration configuration, TeachersService teachersService, StudentsService studentsService, UserService userService, AdminService adminService)
         {
             _passwordService = passwordService;
             _configuration = configuration;
             _teachersService = teachersService;
             _studentsService = studentsService;
             _userService = userService;
+            _adminService = adminService;
         }
 
         [HttpPost("Login")]
@@ -50,6 +53,22 @@ namespace Planio.Controllers
             }
 
             return BadRequest("Username or Password is wrong (╯°□°）╯︵ ┻━┻");
+        }
+
+        [HttpPost("GetRole")]
+        [Authorize(Roles = "admin, teacher, student")]
+        public async Task<IActionResult> GetRole()
+        {
+            var student = await _studentsService.GetById();
+            if (student != null){ return Ok("student"); }
+            var teacher = await _teachersService.GetById();
+            if (teacher != null){ return Ok("teacher");}
+            var admin = await _adminService.GetById();
+            if (admin != null) { return Ok("admin"); }
+            else
+            {
+                return NotFound("No User was found");
+            }
         }
 
         private string CreateToken(UserModel user)
