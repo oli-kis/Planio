@@ -23,16 +23,17 @@ namespace Planio.Controllers
             _lessonService = lessonService;
         }
 
-        [HttpGet("GetStudent"), Authorize]
+        [HttpGet("GetStudentSelf")]
+        [Authorize(Roles = "student")]
         public async Task<IActionResult> GetMe()
         {
             StudentModel student = await _studentsService.GetById();
             return Ok(student);
         }
 
-        [HttpGet("GetClassOfStudent")]
+        [HttpGet("GetClassOfStudentSelf")]
         [Authorize(Roles = "student")]
-        public async Task<IActionResult> GetClassOfStudent()
+        public async Task<IActionResult> GetClassOfStudentSelf()
         {
             StudentModel student = await _studentsService.GetById();
             var studentClass = await _classService.GetSingle(student.ClassID);
@@ -41,9 +42,9 @@ namespace Planio.Controllers
         }
 
 
-        [HttpGet("GetLessonsOfStudent")]
+        [HttpGet("GetLessonsOfStudentSelf")]
         [Authorize(Roles = "student")]
-        public async Task<IActionResult> GetLessonsOfStudent()
+        public async Task<IActionResult> GetLessonsOfStudentSelf()
         {
             StudentModel student = await _studentsService.GetById();
             var studentClass = await _classService.GetSingle(student.ClassID);
@@ -55,6 +56,56 @@ namespace Planio.Controllers
                 {
                     lessons.Add(lessonToAdd);
                 }           
+            }
+            return Ok(lessons);
+        }
+
+        [HttpGet("GetStudentById")]
+        [Authorize(Roles = "teacher, admin")]
+        public async Task<IActionResult> GetStudentById(string id)
+        {
+            StudentModel student = await _studentsService.GetSingle(id);
+            if (student != null)
+            {
+                return Ok(student);
+            }
+            return BadRequest("Student Not Found");
+        }
+
+        [HttpGet("GetClassOfStudent")]
+        [Authorize(Roles = "admin, teacher")]
+        public async Task<IActionResult> GetClassOfStudent(string studentId)
+        {
+            StudentModel student = await _studentsService.GetSingle(studentId);
+            if (student == null)
+            {
+                return BadRequest("Student not Found");
+            }
+            var studentClass = await _classService.GetSingle(student.ClassID);
+            if (studentClass != null)
+            {
+                return Ok(studentClass);
+            }
+            return BadRequest("Class not Found");
+        }
+
+
+        [HttpGet("GetLessonsOfStudent")]
+        [Authorize(Roles = "admin, teacher")]
+        public async Task<IActionResult> GetLessonsOfStudent(string studentId)
+        {
+            StudentModel student = await _studentsService.GetSingle(studentId);
+            if (student == null){return NotFound("Student was not Found");}
+            var studentClass = await _classService.GetSingle(student.ClassID);
+            if (studentClass == null) { return NotFound("Class Not Found"); }
+            List<LessonModel> lessons = new();
+            foreach (var lessonId in studentClass.LessonIDs)
+            {
+                LessonModel lessonToAdd = await _lessonService.GetSingle(lessonId);
+                if (lessonToAdd != null)
+                {
+                    lessons.Add(lessonToAdd);
+                }
             }
             return Ok(lessons);
         }

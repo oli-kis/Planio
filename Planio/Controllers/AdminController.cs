@@ -30,10 +30,12 @@ namespace Planio.Controllers
         }
 
         [HttpGet("GetAllStudents")]
+        [Authorize(Roles = "admin")]
         public async Task<List<StudentModel>> GetAllStudents() =>
             await _studentsService.GetAsync();
 
         [HttpGet("GetAllTeachers")]
+        [Authorize(Roles = "admin")]
         public async Task<List<TeacherModel>> GetAllTeachers() =>
             await _teachersService.GetAsync();
 
@@ -54,6 +56,7 @@ namespace Planio.Controllers
         }
 
         [HttpPost("RegisterStudent")]
+        [Authorize(Roles = "admin")]
         public async Task<IActionResult> RegisterStudent(NewStudentDto newUser)
         {
             try
@@ -87,6 +90,7 @@ namespace Planio.Controllers
         }
 
         [HttpPost("RegisterTeacher")]
+        [Authorize(Roles = "admin")]
         public async Task<IActionResult> RegisterTeacher(NewTeacherDto newUser)
         {
             try
@@ -123,7 +127,7 @@ namespace Planio.Controllers
 
                 if (await _adminService.GetWithEmail(HttpUtility.HtmlEncode(admin.Email)) != null)
                 {
-                    return BadRequest("A Admin with this Email already exists (╯°□°）╯︵ ┻━┻");
+                    return BadRequest("An Admin with this Email already exists (╯°□°）╯︵ ┻━┻");
                 }
                 await _adminService.CreateAsync(admin);
 

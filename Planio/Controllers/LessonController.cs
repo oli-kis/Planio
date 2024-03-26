@@ -27,31 +27,42 @@ namespace Planio.Controllers
         }
 
         [HttpGet("GetAllLessons")]
+        [Authorize(Roles = "admin")]
         public async Task<List<LessonModel>> GetAllLessons() =>
             await _lessonService.GetAsync();
 
         [HttpPost("CreateLesson")]
-        public async Task<IActionResult> CreateNewLesson(LessonModel lesson)
+        [Authorize(Roles = "teacher")]
+        public async Task<IActionResult> CreateNewLesson(NewLessonDto lesson)
         {
             if (lesson == null)
             {
                 return BadRequest($"Fehler beim hinzufügen der Lektion (╯°□°）╯︵ ┻━┻");
             }
-            var teacher = await _teacherService.GetWithEmail(lesson.TeacherMail);
+            var teacher = await _teacherService.GetById();
             if (teacher == null)
             {
-                return BadRequest($"Lehrer wurde nicht gefunden (╯°□°）╯︵ ┻━┻");
+                return NotFound($"Lehrer wurde nicht gefunden (╯°□°）╯︵ ┻━┻");
             }
+            bool teacherAvailability = await CheckIfTeacherAvailable(teacher, lesson.LessonTime);
+            if (!teacherAvailability) { return BadRequest("Teacher already occupied"); }
+
             var classToAdd = await _classService.GetWithClassName(lesson.AttendingClassName);
             if (classToAdd == null)
             {
-                return BadRequest($"Klasse wurde nicht gefunden (╯°□°）╯︵ ┻━┻");
+                return NotFound($"Klasse wurde nicht gefunden (╯°□°）╯︵ ┻━┻");
             }
+            bool classAvailability = await CheckIfClassAvailable(classToAdd, lesson.LessonTime);
+            if (!classAvailability) { return BadRequest("Class already occupied"); }
+
             var room = await _roomsService.GetWithRoomName(lesson.RoomName);
             if (room == null)
             {
-                return BadRequest($"Raum wurde nicht gefunden (╯°□°）╯︵ ┻━┻");
+                return NotFound($"Raum wurde nicht gefunden (╯°□°）╯︵ ┻━┻");
             }
+            bool roomAvailability = await CheckIfRoomAvailable(room, lesson.LessonTime);
+            if (!roomAvailability) { return BadRequest("Room already occupied"); }
+
             if (lesson.LessonTime < 1 || lesson.LessonTime > 40)
             {
                 return BadRequest($"Zeit muss zwischen 1 und 40 sein (╯°□°）╯︵ ┻━┻");
@@ -63,7 +74,7 @@ namespace Planio.Controllers
                 newLesson.LessonName = lesson.LessonName;
                 newLesson.RoomName = lesson.RoomName;
                 newLesson.AttendingClassName = lesson.AttendingClassName;
-                newLesson.TeacherMail = lesson.TeacherMail;
+                newLesson.TeacherMail = teacher.Email;
                 newLesson.LessonTime = lesson.LessonTime;
                 await _lessonService.CreateAsync(newLesson);
                 await _lessonService.AddLessonToTeacher(newLesson, teacher);
@@ -84,6 +95,48 @@ namespace Planio.Controllers
         {
             await _lessonService.RemoveAsync(LessonId);
             return Ok();
+        }
+
+        private async Task<bool> CheckIfTeacherAvailable(TeacherModel teacher, int lessonTime)
+        {
+            foreach (var lessonId in teacher.LessonIDs)
+            {
+                LessonModel lessonToAdd = await _lessonService.GetSingle(lessonId);
+                if (lessonToAdd.LessonTime == lessonTime)
+                {
+                    return false;
+                }
+            }
+            return true;
+        }
+        private async Task<bool> CheckIfClassAvailable(ClassModel classToAdd, int lessonTime)
+        {
+            foreach (var lessonId in classToAdd.LessonIDs)
+            {
+                LessonModel lessonToAdd = await _lessonService.GetSingle(lessonId);
+                if (lessonToAdd == null)
+                {
+                    return true;
+                }
+                if (lessonToAdd.LessonTime == lessonTime)
+                {
+                    return false;
+                }
+            }
+            return true;
+        }
+
+        private async Task<bool> CheckIfRoomAvailable(RoomModel room, int lessonTime)
+        {
+            foreach (var lessonId in room.LessonIDs)
+            {
+                LessonModel lessonToAdd = await _lessonService.GetSingle(lessonId);
+                if (lessonToAdd.LessonTime == lessonTime)
+                {
+                    return false;
+                }
+            }
+            return true;
         }
     }
 }

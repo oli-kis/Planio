@@ -24,10 +24,12 @@ namespace Planio.Controllers
         }
 
         [HttpGet("GetAllClasses")]
+        [Authorize(Roles = "admin, teacher")]
         public async Task<List<ClassModel>> GetAllClasses() =>
             await _classService.GetAsync();
 
         [HttpPost("CreateClass")]
+        [Authorize(Roles = "admin")]
         public async Task<IActionResult> CreateNewClass(NewClassDto classData)
         {
             if (classData == null)
@@ -57,7 +59,7 @@ namespace Planio.Controllers
         }
 
         [HttpGet("GetLessonsOfClass")]
-        [Authorize]
+        [Authorize(Roles = "admin, teacher")]
         public async Task<IActionResult> GetLessonsOfClass(string className)
         {
             var classToGet = await _classService.GetWithClassName(className);

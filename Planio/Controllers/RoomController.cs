@@ -27,10 +27,12 @@ namespace Planio.Controllers
         }
 
         [HttpGet("GetAllRooms")]
+        [Authorize(Roles = "admin, teacher")]
         public async Task<List<RoomModel>> GetAllRooms() =>
             await _roomService.GetAsync();
 
         [HttpPost("CreateRoom")]
+        [Authorize(Roles = "admin")]
         public async Task<IActionResult> CreateNewRoom(NewRoomDto room)
         {
             if (room == null)
