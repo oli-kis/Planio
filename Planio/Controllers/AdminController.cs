@@ -61,10 +61,10 @@ namespace Planio.Controllers
         {
             try
             {
-                if (newUser.Email == ""){return BadRequest("Bitte Email eingeben");}
-                if (newUser.FirstName == "") { return BadRequest("Bitte Vornamen eingeben"); }
-                if (newUser.LastName == "") { return BadRequest("Bitte Nachnamen eingeben"); }
-                if (newUser.Password == "") { return BadRequest("Bitte Passwort eingeben"); }
+                if (string.IsNullOrWhiteSpace(newUser.Email)) {return BadRequest("Bitte Email eingeben");}
+                if (string.IsNullOrWhiteSpace(newUser.FirstName)) { return BadRequest("Bitte Vornamen eingeben"); }
+                if (string.IsNullOrWhiteSpace(newUser.LastName)) { return BadRequest("Bitte Nachnamen eingeben"); }
+                if (string.IsNullOrWhiteSpace(newUser.Password)) { return BadRequest("Bitte Passwort eingeben"); }
                 var classToAdd = await _classService.GetWithClassName(newUser.ClassName);
                 if (classToAdd == null)
                 {
