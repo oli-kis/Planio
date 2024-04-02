@@ -37,7 +37,7 @@ namespace Planio.Controllers
         {
             if (room == null)
             {
-                return BadRequest($"Fehler beim hinzufügen des Raumes (╯°□°）╯︵ ┻━┻");
+                return BadRequest($"Fehler beim Hinzufügen des Raumes (╯°□°）╯︵ ┻━┻");
             }
 
             try
@@ -45,11 +45,11 @@ namespace Planio.Controllers
                 RoomModel newRoom = new();
                 newRoom.RoomName = room.RoomName;
                 await _roomService.CreateAsync(newRoom);
-                return Ok("Room successfully created");
+                return Ok("Raum wurde erfolgreich hinzugefügt");
             }
             catch (Exception ex)
             {
-                return BadRequest($"Failed to create the Room: {ex.Message} (╯°□°）╯︵ ┻━┻");
+                return BadRequest($"Fehler beim Erstellen des Raumes: {ex.Message} (╯°□°）╯︵ ┻━┻");
             }
         }
         [HttpDelete("RemoveRoom")]
@@ -57,7 +57,7 @@ namespace Planio.Controllers
         public async Task<IActionResult> RemoveRoom(string RoomId)
         {
             await _roomService.RemoveAsync(RoomId);
-            return Ok();
+            return Ok("Raum erolgreich gelöscht");
         }
     }
 }

@@ -55,7 +55,7 @@ namespace Planio.Controllers
         public async Task<IActionResult> GetTeacher(string teacherId)
         {
             TeacherModel teacher = await _teachersService.GetSingle(teacherId);
-            if(teacher == null) { return NotFound("Teacher was not Found"); }
+            if(teacher == null) { return NotFound("Der Lehrer wurde nicht gefunden"); }
             return Ok(teacher);
         }
 
@@ -65,7 +65,7 @@ namespace Planio.Controllers
         public async Task<IActionResult> GetLessonsOfTeacher(string teacherId)
         {
             TeacherModel teacher = await _teachersService.GetSingle(teacherId);
-            if(teacher == null) { return NotFound("Teacher was not Found"); }
+            if(teacher == null) { return NotFound("Der Lehrer wurde nicht gefunden"); }
             List<LessonModel> lessons = new();
             foreach (var lessonId in teacher.LessonIDs)
             {

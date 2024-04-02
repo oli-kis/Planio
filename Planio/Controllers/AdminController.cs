@@ -44,7 +44,7 @@ namespace Planio.Controllers
         public async Task<IActionResult> RemoveStudent(string StudentId)
         {
             await _studentsService.RemoveAsync(StudentId);
-            return Ok();
+            return Ok("Schüler wurde erfolreich entfernt");
         }
 
         [HttpDelete("RemoveTeacher")]
@@ -52,7 +52,7 @@ namespace Planio.Controllers
         public async Task<IActionResult> RemoveTeacher(string TeacherId)
         {
             await _teachersService.RemoveAsync(TeacherId);
-            return Ok();
+            return Ok("Lehrer wurde erfolgreich entfernt");
         }
 
         [HttpPost("RegisterStudent")]
@@ -64,9 +64,9 @@ namespace Planio.Controllers
                 var classToAdd = await _classService.GetWithClassName(newUser.ClassName);
                 if (classToAdd == null)
                 {
-                    return BadRequest("Class not found.");
+                    return NotFound("Die Klasse wurde nicht gefunden");
                 }
-                StudentModel student = new StudentModel
+                StudentModel student = new()
                 {
                     FirstName = newUser.FirstName,
                     LastName = newUser.LastName,
@@ -77,7 +77,7 @@ namespace Planio.Controllers
 
                 if (await _studentsService.GetWithEmail(student.Email) != null)
                 {
-                    return BadRequest("A User with this Email already exists (╯°□°）╯︵ ┻━┻");
+                    return BadRequest("Ein Schüler mit dieser Email existiert bereits (╯°□°）╯︵ ┻━┻");
                 }
                 await _studentsService.CreateAsync(student);
                 await _classService.AddStudentToClassAsync(student, classToAdd);
@@ -85,7 +85,7 @@ namespace Planio.Controllers
             }
             catch (Exception ex)
             {
-                return BadRequest($"Failed to register {ex.Message} (╯°□°）╯︵ ┻━┻");
+                return BadRequest($"Fehler beim Registrieren des Schülers {ex.Message} (╯°□°）╯︵ ┻━┻");
             }
         }
 
@@ -95,15 +95,17 @@ namespace Planio.Controllers
         {
             try
             {
-                TeacherModel teacher = new TeacherModel();
-                teacher.Email = HttpUtility.HtmlEncode(newUser.Email);
-                teacher.Password = _passwordService.HashPassword(newUser.Password);
-                teacher.FirstName = newUser.FirstName;
-                teacher.LastName = newUser.LastName;
+                TeacherModel teacher = new()
+                {
+                    Email = HttpUtility.HtmlEncode(newUser.Email),
+                    Password = _passwordService.HashPassword(newUser.Password),
+                    FirstName = newUser.FirstName,
+                    LastName = newUser.LastName
+                };
 
                 if (await _teachersService.GetWithEmail(HttpUtility.HtmlEncode(teacher.Email)) != null)
                 {
-                    return BadRequest("A User with this Email already exists (╯°□°）╯︵ ┻━┻");
+                    return BadRequest("Ein Lehrer mit dieser Email existiert bereits (╯°□°）╯︵ ┻━┻");
                 }
                 await _teachersService.CreateAsync(teacher);
 
@@ -111,7 +113,7 @@ namespace Planio.Controllers
             }
             catch (Exception ex)
             {
-                return BadRequest($"Failed to register {ex.Message} (╯°□°）╯︵ ┻━┻");
+                return BadRequest($"Fehler beim Registrieren des Lehrers {ex.Message} (╯°□°）╯︵ ┻━┻");
             }
         }
 
@@ -121,13 +123,15 @@ namespace Planio.Controllers
         {
             try
             {
-                Administrators admin = new();
-                admin.Email = HttpUtility.HtmlEncode(newAdmin.Email);
-                admin.Password = _passwordService.HashPassword(newAdmin.Password);
+                Administrators admin = new()
+                {
+                    Email = HttpUtility.HtmlEncode(newAdmin.Email),
+                    Password = _passwordService.HashPassword(newAdmin.Password)
+                };
 
                 if (await _adminService.GetWithEmail(HttpUtility.HtmlEncode(admin.Email)) != null)
                 {
-                    return BadRequest("An Admin with this Email already exists (╯°□°）╯︵ ┻━┻");
+                    return BadRequest("Ein Admin mit dieser Email existiert bereits (╯°□°）╯︵ ┻━┻");
                 }
                 await _adminService.CreateAsync(admin);
 
@@ -135,7 +139,7 @@ namespace Planio.Controllers
             }
             catch (Exception ex)
             {
-                return BadRequest($"Failed to register {ex.Message} (╯°□°）╯︵ ┻━┻");
+                return BadRequest($"Fehler beim Registrieren des Admins {ex.Message} (╯°□°）╯︵ ┻━┻");
             }
         }
     }

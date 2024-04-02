@@ -37,7 +37,7 @@ namespace Planio.Controllers
         {
             if (userData == null)
             {
-                return BadRequest("You forgot the username or password. (╯°□°）╯︵ ┻━┻");
+                return BadRequest("Sie haben das Passwort und den Benutzernamen vergessen. (╯°□°）╯︵ ┻━┻");
             }
 
             var user = await _userService.GetUserWithEmail(userData.Email);
@@ -52,7 +52,7 @@ namespace Planio.Controllers
                 }
             }
 
-            return BadRequest("Username or Password is wrong (╯°□°）╯︵ ┻━┻");
+            return BadRequest("Benutzername oder Passwort falsch (╯°□°）╯︵ ┻━┻");
         }
 
         [HttpGet("GetRole")]
@@ -67,7 +67,7 @@ namespace Planio.Controllers
             if (admin != null) { return Ok("admin"); }
             else
             {
-                return NotFound("No User was found");
+                return NotFound("Der Benutzer wurde nicht gefunden");
             }
         }
 

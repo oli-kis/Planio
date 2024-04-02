@@ -34,19 +34,20 @@ namespace Planio.Controllers
         {
             if (classData == null)
             {
-                return BadRequest($"Fehler beim hinzufügen der Klasse (╯°□°）╯︵ ┻━┻");
+                return BadRequest($"Fehler beim Hinzufügen der Klasse (╯°□°）╯︵ ┻━┻");
             }
             
             if (await _classService.GetWithClassName(classData.ClassName) != null)
             {
-                return BadRequest("Class already exists");
+                return BadRequest("Klasse existiert bereits!");
             }
 
             try
             {
-                ClassModel newClass = new ClassModel();
-
-                newClass.ClassName = classData.ClassName;
+                ClassModel newClass = new()
+                {
+                    ClassName = classData.ClassName
+                };
 
                 await _classService.CreateAsync(newClass);
                 return Ok("Class successfully created");
@@ -54,7 +55,7 @@ namespace Planio.Controllers
             }
             catch (Exception ex)
             {
-                return BadRequest($"Failed to create the Class: {ex.Message} (╯°□°）╯︵ ┻━┻");
+                return BadRequest($"Fehler beim Erstellen der Klasse: {ex.Message} (╯°□°）╯︵ ┻━┻");
             }
         }
 
@@ -63,6 +64,7 @@ namespace Planio.Controllers
         public async Task<IActionResult> GetLessonsOfClass(string className)
         {
             var classToGet = await _classService.GetWithClassName(className);
+            if (classToGet == null) { return NotFound("Die Klasse wurde nicht gefunden"); }
             List<LessonModel> lessons = new();
             foreach (var lessonId in classToGet.LessonIDs)
             {
@@ -80,7 +82,7 @@ namespace Planio.Controllers
         public async Task<IActionResult> RemoveClass(string classId)
         {
             await _classService.RemoveAsync(classId);
-            return Ok();
+            return Ok("Die Klasse wurde erfolgreich entfernt");
         }
 
     }

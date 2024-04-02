@@ -28,6 +28,10 @@ namespace Planio.Controllers
         public async Task<IActionResult> GetMe()
         {
             StudentModel student = await _studentsService.GetById();
+            if (student == null)
+            {
+                return NotFound("Der Schüler wurde nicht gefunden");
+            }
             return Ok(student);
         }
 
@@ -36,8 +40,15 @@ namespace Planio.Controllers
         public async Task<IActionResult> GetClassOfStudentSelf()
         {
             StudentModel student = await _studentsService.GetById();
+            if (student == null)
+            {
+                return NotFound("Der Schüler wurde nicht gefunden");
+            }
             var studentClass = await _classService.GetSingle(student.ClassID);
-            
+            if (studentClass == null)
+            {
+                return NotFound("Die Klasse wurde nicht gefunden");
+            }
             return Ok(studentClass);
         }
 
@@ -47,7 +58,9 @@ namespace Planio.Controllers
         public async Task<IActionResult> GetLessonsOfStudentSelf()
         {
             StudentModel student = await _studentsService.GetById();
+            if (student == null){return NotFound("Der Schüler wurde nicht gefunden");}
             var studentClass = await _classService.GetSingle(student.ClassID);
+            if (studentClass == null) { return NotFound("Die Klasse wurde nicht gefunden"); }
             List<LessonModel> lessons = new();
             foreach (var lessonId in studentClass.LessonIDs)
             {
@@ -69,7 +82,7 @@ namespace Planio.Controllers
             {
                 return Ok(student);
             }
-            return BadRequest("Student Not Found");
+            return NotFound("Der Schüler wurde nicht gefunden");
         }
 
         [HttpGet("GetClassOfStudent")]
@@ -79,14 +92,14 @@ namespace Planio.Controllers
             StudentModel student = await _studentsService.GetSingle(studentId);
             if (student == null)
             {
-                return BadRequest("Student not Found");
+                return NotFound("Der Schüler wurde nicht gefunden");
             }
             var studentClass = await _classService.GetSingle(student.ClassID);
             if (studentClass != null)
             {
                 return Ok(studentClass);
             }
-            return BadRequest("Class not Found");
+            return NotFound("Die Klasse wurde nicht gefunden");
         }
 
 
@@ -95,9 +108,9 @@ namespace Planio.Controllers
         public async Task<IActionResult> GetLessonsOfStudent(string studentId)
         {
             StudentModel student = await _studentsService.GetSingle(studentId);
-            if (student == null){return NotFound("Student was not Found");}
+            if (student == null){return NotFound("Der Schüler wurde nicht gefunden");}
             var studentClass = await _classService.GetSingle(student.ClassID);
-            if (studentClass == null) { return NotFound("Class Not Found"); }
+            if (studentClass == null) { return NotFound("Die Klasse wurde nicht gefunden"); }
             List<LessonModel> lessons = new();
             foreach (var lessonId in studentClass.LessonIDs)
             {

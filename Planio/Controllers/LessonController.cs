@@ -37,7 +37,7 @@ namespace Planio.Controllers
         {
             if (lesson == null)
             {
-                return BadRequest($"Fehler beim hinzufügen der Lektion (╯°□°）╯︵ ┻━┻");
+                return BadRequest($"Fehler beim Hinzufügen der Lektion (╯°□°）╯︵ ┻━┻");
             }
             var teacher = await _teacherService.GetById();
             if (teacher == null)
@@ -65,17 +65,19 @@ namespace Planio.Controllers
 
             if (lesson.LessonTime < 1 || lesson.LessonTime > 40)
             {
-                return BadRequest($"Zeit muss zwischen 1 und 40 sein (╯°□°）╯︵ ┻━┻");
+                return BadRequest($"Die Zeitangabe muss zwischen 1 und 40 sein (╯°□°）╯︵ ┻━┻");
             }
 
             try
             {
-                LessonModel newLesson = new();
-                newLesson.LessonName = lesson.LessonName;
-                newLesson.RoomName = lesson.RoomName;
-                newLesson.AttendingClassName = lesson.AttendingClassName;
-                newLesson.TeacherMail = teacher.Email;
-                newLesson.LessonTime = lesson.LessonTime;
+                LessonModel newLesson = new()
+                {
+                    LessonName = lesson.LessonName,
+                    RoomName = lesson.RoomName,
+                    AttendingClassName = lesson.AttendingClassName,
+                    TeacherMail = teacher.Email,
+                    LessonTime = lesson.LessonTime
+                };
                 await _lessonService.CreateAsync(newLesson);
                 await _lessonService.AddLessonToTeacher(newLesson, teacher);
                 await _lessonService.AddLessonToClass(newLesson, classToAdd);
@@ -94,7 +96,7 @@ namespace Planio.Controllers
         public async Task<IActionResult> RemoveLesson(string LessonId)
         {
             await _lessonService.RemoveAsync(LessonId);
-            return Ok();
+            return Ok("Lektion erfolgreich entfernt");
         }
 
         private async Task<bool> CheckIfTeacherAvailable(TeacherModel teacher, int lessonTime)
