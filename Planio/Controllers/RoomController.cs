@@ -40,7 +40,10 @@ namespace Planio.Controllers
                 return BadRequest($"Fehler beim Hinzufügen des Raumes (╯°□°）╯︵ ┻━┻");
             }
             if(room.RoomName == "") { return BadRequest("Bitte geben Sie einen Raumnamen ein"); }
-
+            if (await _roomService.GetWithRoomName(room.RoomName) != null)
+            {
+                return BadRequest("Raum existiert bereits!");
+            }
             try
             {
                 RoomModel newRoom = new()
