@@ -45,7 +45,7 @@ namespace Planio.Controllers
                 return NotFound($"Lehrer wurde nicht gefunden (╯°□°）╯︵ ┻━┻");
             }
             bool teacherAvailability = await CheckIfTeacherAvailable(teacher, lesson.LessonTime);
-            if (!teacherAvailability) { return BadRequest("Teacher already occupied"); }
+            if (!teacherAvailability) { return BadRequest("Lehrer bereits besetzt"); }
 
             var classToAdd = await _classService.GetWithClassName(lesson.AttendingClassName);
             if (classToAdd == null)
@@ -53,7 +53,7 @@ namespace Planio.Controllers
                 return NotFound($"Klasse wurde nicht gefunden (╯°□°）╯︵ ┻━┻");
             }
             bool classAvailability = await CheckIfClassAvailable(classToAdd, lesson.LessonTime);
-            if (!classAvailability) { return BadRequest("Class already occupied"); }
+            if (!classAvailability) { return BadRequest("Klasse bereits besetzt"); }
 
             var room = await _roomsService.GetWithRoomName(lesson.RoomName);
             if (room == null)
@@ -61,7 +61,7 @@ namespace Planio.Controllers
                 return NotFound($"Raum wurde nicht gefunden (╯°□°）╯︵ ┻━┻");
             }
             bool roomAvailability = await CheckIfRoomAvailable(room, lesson.LessonTime);
-            if (!roomAvailability) { return BadRequest("Room already occupied"); }
+            if (!roomAvailability) { return BadRequest("Raum bereits belegt"); }
 
             if (lesson.LessonTime < 1 || lesson.LessonTime > 40)
             {
@@ -85,7 +85,7 @@ namespace Planio.Controllers
             }
             catch (Exception ex)
             {
-                return BadRequest($"Failed to create the Lesson: {ex.Message} (╯°□°）╯︵ ┻━┻");
+                return BadRequest($"Fehler beim Erstellen der Lektion: {ex.Message} (╯°□°）╯︵ ┻━┻");
             }
         }
 
