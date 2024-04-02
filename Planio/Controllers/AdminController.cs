@@ -61,6 +61,10 @@ namespace Planio.Controllers
         {
             try
             {
+                if (newUser.Email == null){return BadRequest("Bitte Email eingeben");}
+                if (newUser.FirstName == null) { return BadRequest("Bitte Vornamen eingeben"); }
+                if (newUser.LastName == null) { return BadRequest("Bitte Nachnamen eingeben"); }
+                if (newUser.Password == null) { return BadRequest("Bitte Passwort eingeben"); }
                 var classToAdd = await _classService.GetWithClassName(newUser.ClassName);
                 if (classToAdd == null)
                 {
