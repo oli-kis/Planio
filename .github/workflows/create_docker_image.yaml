@@ -27,7 +27,8 @@ jobs:
       - name: Build and push Docker image
         uses: docker/build-push-action@v2
         with:
-          context: .
+          context: ./Planio # This is the directory containing your Dockerfile
+          file: ./Planio/Dockerfile # This specifies the exact path to your Dockerfile
           push: true
           tags: olikis/planio:latest
 
