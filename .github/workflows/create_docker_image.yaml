@@ -1,9 +1,10 @@
 name: Docker Image CI
 
 on:
+  push:
+    branches: [ "oli-kis" ]
   pull_request:
-    branches:
-      - oli-kis
+    branches: [ "oli-kis" ]
 
 jobs:
   build-and-push:
