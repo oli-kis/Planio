@@ -99,6 +99,10 @@ namespace Planio.Controllers
         {
             try
             {
+                if (newUser.Email == null) { return BadRequest("Bitte Email eingeben"); }
+                if (newUser.FirstName == null) { return BadRequest("Bitte Vornamen eingeben"); }
+                if (newUser.LastName == null) { return BadRequest("Bitte Nachnamen eingeben"); }
+                if (newUser.Password == null) { return BadRequest("Bitte Passwort eingeben"); }
                 TeacherModel teacher = new()
                 {
                     Email = HttpUtility.HtmlEncode(newUser.Email),
@@ -127,6 +131,8 @@ namespace Planio.Controllers
         {
             try
             {
+                if (newAdmin.Email == null) { return BadRequest("Bitte Email eingeben"); }
+                if (newAdmin.Password == null) { return BadRequest("Bitte Passwort eingeben"); }
                 Administrators admin = new()
                 {
                     Email = HttpUtility.HtmlEncode(newAdmin.Email),
