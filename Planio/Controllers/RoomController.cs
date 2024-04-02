@@ -39,11 +39,14 @@ namespace Planio.Controllers
             {
                 return BadRequest($"Fehler beim Hinzufügen des Raumes (╯°□°）╯︵ ┻━┻");
             }
+            if(room.RoomName == "") { return BadRequest("Bitte geben Sie einen Raumnamen ein"); }
 
             try
             {
-                RoomModel newRoom = new();
-                newRoom.RoomName = room.RoomName;
+                RoomModel newRoom = new()
+                {
+                    RoomName = room.RoomName
+                };
                 await _roomService.CreateAsync(newRoom);
                 return Ok("Raum wurde erfolgreich hinzugefügt");
             }

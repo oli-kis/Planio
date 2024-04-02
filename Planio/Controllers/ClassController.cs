@@ -36,6 +36,7 @@ namespace Planio.Controllers
             {
                 return BadRequest($"Fehler beim Hinzufügen der Klasse (╯°□°）╯︵ ┻━┻");
             }
+            if(classData.ClassName == "") { return BadRequest("Bitte geben Sie einen Klassennamen ein"); }
             
             if (await _classService.GetWithClassName(classData.ClassName) != null)
             {

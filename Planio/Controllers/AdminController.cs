@@ -61,10 +61,10 @@ namespace Planio.Controllers
         {
             try
             {
-                if (newUser.Email == null){return BadRequest("Bitte Email eingeben");}
-                if (newUser.FirstName == null) { return BadRequest("Bitte Vornamen eingeben"); }
-                if (newUser.LastName == null) { return BadRequest("Bitte Nachnamen eingeben"); }
-                if (newUser.Password == null) { return BadRequest("Bitte Passwort eingeben"); }
+                if (newUser.Email == ""){return BadRequest("Bitte Email eingeben");}
+                if (newUser.FirstName == "") { return BadRequest("Bitte Vornamen eingeben"); }
+                if (newUser.LastName == "") { return BadRequest("Bitte Nachnamen eingeben"); }
+                if (newUser.Password == "") { return BadRequest("Bitte Passwort eingeben"); }
                 var classToAdd = await _classService.GetWithClassName(newUser.ClassName);
                 if (classToAdd == null)
                 {
@@ -99,10 +99,10 @@ namespace Planio.Controllers
         {
             try
             {
-                if (newUser.Email == null) { return BadRequest("Bitte Email eingeben"); }
-                if (newUser.FirstName == null) { return BadRequest("Bitte Vornamen eingeben"); }
-                if (newUser.LastName == null) { return BadRequest("Bitte Nachnamen eingeben"); }
-                if (newUser.Password == null) { return BadRequest("Bitte Passwort eingeben"); }
+                if (newUser.Email == "") { return BadRequest("Bitte Email eingeben"); }
+                if (newUser.FirstName == "") { return BadRequest("Bitte Vornamen eingeben"); }
+                if (newUser.LastName == "") { return BadRequest("Bitte Nachnamen eingeben"); }
+                if (newUser.Password == "") { return BadRequest("Bitte Passwort eingeben"); }
                 TeacherModel teacher = new()
                 {
                     Email = HttpUtility.HtmlEncode(newUser.Email),
@@ -131,8 +131,8 @@ namespace Planio.Controllers
         {
             try
             {
-                if (newAdmin.Email == null) { return BadRequest("Bitte Email eingeben"); }
-                if (newAdmin.Password == null) { return BadRequest("Bitte Passwort eingeben"); }
+                if (newAdmin.Email == "") { return BadRequest("Bitte Email eingeben"); }
+                if (newAdmin.Password == "") { return BadRequest("Bitte Passwort eingeben"); }
                 Administrators admin = new()
                 {
                     Email = HttpUtility.HtmlEncode(newAdmin.Email),
